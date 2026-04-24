@@ -33,8 +33,7 @@ export default async function Page({
   const { cabinId } = await params;
   const cabin: Tables<"cabins"> = await getCabin(+cabinId);
 
-  const { id, name, maxCapacity, regularPrice, discount, image, description } =
-    cabin;
+  const { name, maxCapacity, image, description } = cabin;
 
   return (
     <div className="max-w-6xl mx-auto mt-8">
@@ -49,7 +48,7 @@ export default async function Page({
         </div>
 
         <div>
-          <h3 className="text-accent-100 font-black text-7xl mb-5 translate-x-[-254px] bg-primary-950 p-6 pb-1 w-[150%]">
+          <h3 className="text-accent-100 font-black text-7xl mb-5 translate-x-63.5 bg-primary-950 p-6 pb-1 w-[150%]">
             Cabin {name}
           </h3>
 
