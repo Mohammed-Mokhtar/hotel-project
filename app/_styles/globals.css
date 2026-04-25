@@ -27,7 +27,7 @@
 
 @layer components {
   .spinner {
-    margin: 3.2rem auto 1.6rem;
+    margin: 3.6rem auto;
     width: 60px;
     aspect-ratio: 1;
     border-radius: 50%;

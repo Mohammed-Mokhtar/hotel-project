@@ -1,8 +1,4 @@
-type SpinnerProps = {
-  count?: number;
-};
-
-function Spinner({ count = 3 }: SpinnerProps) {
+function Spinner() {
   return <div className="spinner"></div>;
 }
 

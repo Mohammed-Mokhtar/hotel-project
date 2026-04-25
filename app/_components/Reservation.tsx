@@ -12,6 +12,7 @@ export default async function Reservation({
 }) {
   const [settings, bookedDates]: [Tables<"settings">, Date[]] =
     await Promise.all([getSettings(), getBookedDatesByCabinId(cabin.id)]);
+
   const session = await auth();
   return (
     <div className="grid grid-cols-2 gap-x-1 border border-primary-800 min-h-100">

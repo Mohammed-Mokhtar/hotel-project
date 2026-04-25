@@ -20,7 +20,6 @@ async function SelectCountry({
   const flag =
     countries.find((country: Country) => country.name === defaultCountry)
       ?.flag ?? "";
-  console.log(defaultCountry);
 
   return (
     <select

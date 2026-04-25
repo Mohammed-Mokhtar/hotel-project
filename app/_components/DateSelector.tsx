@@ -1,18 +1,24 @@
 "use client";
 import { Tables } from "@/database.types";
-import { DayPicker } from "react-day-picker";
+import { DateRange, DayPicker } from "react-day-picker";
 import "react-day-picker/dist/style.css";
 import { useReservation } from "./ReservationContext";
+import {
+  differenceInDays,
+  isPast,
+  isSameDay,
+  isWithinInterval,
+} from "date-fns";
 
-// function isAlreadyBooked(range, datesArr) {
-//   return (
-//     range.from &&
-//     range.to &&
-//     datesArr.some((date) =>
-//       isWithinInterval(date, { start: range.from, end: range.to }),
-//     )
-//   );
-// }
+function isAlreadyBooked(range: DateRange | undefined, datesArr: Date[]) {
+  return (
+    range?.from &&
+    range?.to &&
+    datesArr.some((date) =>
+      isWithinInterval(date, { start: range.from!, end: range.to! }),
+    )
+  );
+}
 
 function DateSelector({
   settings,
@@ -24,12 +30,17 @@ function DateSelector({
   cabin: Tables<"cabins">;
 }) {
   const { range, setRange, resetRange } = useReservation();
-  // CHANGE
-  const regularPrice = 23;
-  const discount = 23;
-  const numNights = 23;
-  const cabinPrice = 23;
-  // const range = { from: null, to: null };
+
+  const displayRange = isAlreadyBooked(range, bookedDates) ? undefined : range;
+
+  const { regularPrice, discount } = cabin;
+
+  const from = displayRange?.from;
+  const to = displayRange?.to;
+
+  const numNights = from && to ? differenceInDays(to, from) : 0;
+
+  const cabinPrice = numNights * (regularPrice! - (discount ?? 0));
 
   // SETTINGS
   const { minBookingLength, maxBookingLength } = settings;
@@ -39,9 +50,12 @@ function DateSelector({
       <DayPicker
         className="pt-12 place-self-center"
         mode="range"
-        disabled={[{ before: new Date() }]}
+        disabled={(curDate) =>
+          isPast(curDate) ||
+          bookedDates.some((date) => isSameDay(date, curDate))
+        }
         onSelect={setRange}
-        selected={range}
+        selected={displayRange}
         min={minBookingLength!}
         max={maxBookingLength!}
         startMonth={new Date()}
@@ -57,9 +71,11 @@ function DateSelector({
       <div className="flex items-center justify-between px-8 bg-accent-500 text-primary-800 h-[72px]">
         <div className="flex items-baseline gap-6">
           <p className="flex gap-2 items-baseline">
-            {discount > 0 ? (
+            {(discount ?? 0 > 0) ? (
               <>
-                <span className="text-2xl">${regularPrice - discount}</span>
+                <span className="text-2xl">
+                  ${regularPrice! - (discount ?? 0)}
+                </span>
                 <span className="line-through font-semibold text-primary-700">
                   ${regularPrice}
                 </span>

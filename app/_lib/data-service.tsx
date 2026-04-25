@@ -1,7 +1,7 @@
 import { eachDayOfInterval } from "date-fns";
 import { supabase } from "./supabase";
 
-import type { Tables, TablesInsert, TablesUpdate } from "@/database.types";
+import type { TablesInsert, TablesUpdate } from "@/database.types";
 import { notFound } from "next/navigation";
 
 export type Country = {
@@ -60,7 +60,7 @@ export const getCabins = async function () {
 
 // Guests are uniquely identified by their email address
 export async function getGuest(email: string) {
-  const { data, error } = await supabase
+  const { data } = await supabase
     .from("guests")
     .select("*")
     .eq("email", email)
@@ -71,7 +71,7 @@ export async function getGuest(email: string) {
 }
 
 export async function getBooking(id: number) {
-  const { data, error, count } = await supabase
+  const { data, error } = await supabase
     .from("bookings")
     .select("*")
     .eq("id", id)
@@ -124,8 +124,8 @@ export async function getBookedDatesByCabinId(cabinId: number) {
   const bookedDates = data
     .map((booking) => {
       return eachDayOfInterval({
-        start: new Date(booking.startDate + "T00:00:00"),
-        end: new Date(booking.endDate + "T00:00:00"),
+        start: new Date(booking.startDate!),
+        end: new Date(booking.endDate!),
       });
     })
     .flat();
